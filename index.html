@@ -287,7 +287,70 @@ function demoReply(message) {
   return "RECIBIDO.\n\nTu mensaje llegó a la interfaz. En esta versión todavía no puedo analizarlo realmente porque no hay un modelo de IA conectado.\n\nEl próximo paso técnico es crear un backend seguro que reciba los mensajes y consulte un proveedor de IA sin exponer claves privadas en GitHub Pages.\n\n[Respuesta de demostración]";
 }
 
-function sendMessage(text) {
+
+async function sendMessage(text) {
+  const message = text.trim();
+  if (!message || busy) return;
+
+  busy = true;
+  sendButton.disabled = true;
+  input.disabled = true;
+
+  history.push({ role: "user", text: message });
+  addMessage("user", message);
+  updateWelcome();
+  saveHistory();
+
+  input.value = "";
+  resizeInput();
+  updateCounter();
+  addTyping();
+
+  try {
+    const response = await fetch(
+      "https://atlas-api.ianagustin035.workers.dev",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error del servidor.");
+    }
+
+    if (!data.reply) {
+      throw new Error("El servidor no devolvió una respuesta.");
+    }
+
+    removeTyping();
+    history.push({ role: "atlas", text: data.reply });
+    addMessage("atlas", data.reply);
+    saveHistory();
+
+  } catch (error) {
+    removeTyping();
+    const errorText =
+      "No pude conectarme con la IA. " +
+      (error.message || "Revisá la conexión con el servidor.");
+
+    history.push({ role: "atlas", text: errorText });
+    addMessage("atlas", errorText);
+    saveHistory();
+
+  } finally {
+    busy = false;
+    sendButton.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+}
+ {
   const message = text.trim();
   if (!message || busy) return;
 
