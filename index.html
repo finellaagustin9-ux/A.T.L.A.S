@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b0a">
+<title>A.T.L.A.S. 0.1 | NEXUS</title>
+
+<style>
+:root{
+  --bg:#080b0a;
+  --panel:#0e1511;
+  --panel2:#121c15;
+  --line:#26392b;
+  --green:#71ff9b;
+  --green2:#2ee879;
+  --text:#edf7ef;
+  --muted:#91a398;
+  --gold:#e8ca82;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+body{
+  background:radial-gradient(ellipse at 50% -15%,#16452b 0,transparent 48%),var(--bg);
+  color:var(--text);
+}
+button,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.app{max-width:1100px;min-height:100dvh;margin:auto;padding:0 22px;display:flex;flex-direction:column}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #ffffff12}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:43px;height:43px;display:grid;place-items:center;border:1px solid #71ff9b55;border-radius:13px;color:var(--green);font-size:24px;font-weight:900;background:#71ff9b0c;box-shadow:0 0 24px #71ff9b12}
+.brand-name{font-weight:850;letter-spacing:3px;font-size:17px}
+.brand-name span{color:var(--green)}
+.brand-sub{font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:3px}
+.status{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.header-actions{display:flex;gap:8px}
+.icon-btn{height:38px;padding:0 12px;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--panel)}
+.icon-btn:hover{border-color:var(--green)}
+main{width:100%;max-width:760px;margin:0 auto;flex:1;display:flex;flex-direction:column}
+.welcome{text-align:center;padding:42px 0 28px}
+.core{position:relative;width:88px;height:88px;margin:0 auto 25px;border:1px solid #71ff9b55;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#205632,#0a160e 70%);box-shadow:0 0 35px #2ee87917}
+.core:before,.core:after{content:"";position:absolute;inset:-8px;border:1px solid #71ff9b28;border-radius:50%}
+.core:after{inset:-14px;border-style:dashed;animation:rotate 35s linear infinite}
+.core b{font-size:34px;color:var(--green);text-shadow:0 0 20px #71ff9b88}
+@keyframes rotate{to{transform:rotate(360deg)}}
+.eyebrow{font-size:10px;letter-spacing:3px;color:var(--green);font-weight:800}
+h1{font-size:clamp(27px,6vw,42px);letter-spacing:3px;margin:15px 0 10px}
+h1 span{color:var(--green)}
+.welcome p{max-width:450px;margin:0 auto;color:var(--muted);font-size:13px;line-height:1.8}
+.demo-note{display:inline-block;margin-top:17px;padding:8px 11px;border:1px solid #e8ca8238;border-radius:9px;color:var(--gold);font-size:10px;background:#e8ca8209}
+.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:24px}
+.suggestion{min-height:88px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:linear-gradient(140deg,#121c15,#0b100d);transition:.2s}
+.suggestion:hover{border-color:#71ff9b88;transform:translateY(-2px)}
+.suggestion .emoji{display:block;font-size:18px;margin-bottom:8px;color:var(--green)}
+.suggestion strong{display:block;font-size:12px;margin-bottom:5px}
+.suggestion small{display:block;color:var(--muted);font-size:11px;line-height:1.5}
+.chat{display:flex;flex-direction:column;gap:20px;padding:5px 0 22px}
+.message{display:flex;gap:10px;align-items:flex-start}
+.message.user{justify-content:flex-end}
+.avatar{flex-shrink:0;width:32px;height:32px;display:grid;place-items:center;border-radius:10px;color:var(--green);background:#71ff9b10;border:1px solid #71ff9b35;font-weight:900}
+.bubble{max-width:min(88%,560px);padding:13px 15px;border:1px solid var(--line);border-radius:4px 15px 15px 15px;background:var(--panel);font-size:13px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.user .bubble{background:#173021;border-color:#2ee87935;border-radius:15px 4px 15px 15px}
+.message-meta{font-size:9px;letter-spacing:1.5px;color:var(--green);font-weight:800;margin-bottom:5px}
+.message.user .message-meta{color:#a6d8b4}
+.typing{display:flex;gap:5px;padding:7px 0}
+.typing i{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1s infinite alternate}
+.typing i:nth-child(2){animation-delay:.2s}
+.typing i:nth-child(3){animation-delay:.4s}
+@keyframes pulse{to{opacity:.2;transform:translateY(-3px)}}
+.composer-wrap{position:sticky;bottom:0;margin-top:auto;padding:14px 0 12px;background:linear-gradient(transparent,var(--bg) 16%)}
+.composer{display:flex;align-items:flex-end;gap:9px;padding:10px;background:#101711;border:1px solid #304936;border-radius:17px;box-shadow:0 10px 35px #0005}
+.composer:focus-within{border-color:#71ff9b88}
+textarea{flex:1;min-width:0;min-height:42px;max-height:140px;resize:none;padding:11px 5px;color:var(--text);background:transparent;border:0;outline:0;line-height:1.5}
+textarea::placeholder{color:#75887b}
+.send{flex-shrink:0;width:43px;height:43px;border:0;border-radius:12px;background:var(--green);color:#061109;font-size:22px;font-weight:900}
+.send:hover{background:#a0ffba}
+.send:disabled{opacity:.45;cursor:wait}
+.composer-hint{display:flex;justify-content:space-between;gap:10px;margin-top:9px;color:var(--muted);font-size:10px}
+footer{text-align:center;padding:13px 0 20px;color:#66776c;font-size:10px;line-height:1.8}
+footer span{color:var(--green)}
+.hidden{display:none!important}
+@media(max-width:520px){
+  .app{padding:0 14px}
+  header{height:68px}
+  .logo{width:38px;height:38px}
+  .brand-name{font-size:15px;letter-spacing:2px}
+  .brand-sub{font-size:8px;letter-spacing:1px}
+  .status{font-size:0;gap:0}
+  .welcome{padding:37px 0 25px}
+  .core{width:78px;height:78px}
+  .suggestions{gap:8px}
+  .suggestion{padding:11px;min-height:95px}
+  .composer-hint{font-size:9px}
+  .icon-btn{padding:0 10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">A</div>
+      <div>
+        <div class="brand-name">A.T.L.A.<span>S.</span></div>
+        <div class="brand-sub">ADVANCED INTELLIGENCE</div>
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span>&nbsp; DEMO LOCAL</div>
+    <div class="header-actions">
+      <button class="icon-btn" id="newChat" title="Nueva conversación" aria-label="Nueva conversación">＋</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="core" aria-hidden="true"><b>A</b></div>
+      <div class="eyebrow">SISTEMA INICIALIZADO · V0.1</div>
+      <h1>¿QUÉ VAMOS A <span>RESOLVER?</span></h1>
+      <p>Soy A.T.L.A.S., un asistente en desarrollo. Exploremos ideas, resolvamos problemas y construyamos algo que valga la pena.</p>
+      <div class="demo-note">◈ Prototipo local · Respuestas simuladas</div>
+    </section>
+
+    <section class="suggestions" id="suggestions" aria-label="Ideas para comenzar">
+      <button class="suggestion" data-prompt="Ayudame a crear un proyecto desde cero.">
+        <span class="emoji">⌘</span><strong>Crear algo nuevo</strong>
+        <small>Convertí una idea en un proyecto.</small>
+      </button>
+      <button class="suggestion" data-prompt="Quiero aprender programación. ¿Por dónde empiezo?">
+        <span class="emoji">⌁</span><strong>Aprender</strong>
+        <small>Descubrí y practicá nuevas habilidades.</small>
+      </button>
+      <button class="suggestion" data-prompt="Tengo un problema y quiero analizarlo con objetividad.">
+        <span class="emoji">◎</span><strong>Analizar un problema</strong>
+        <small>Separá los hechos de las suposiciones.</small>
+      </button>
+      <button class="suggestion" data-prompt="Dame una idea original para desarrollar hoy.">
+        <span class="emoji">✳</span><strong>Explorar ideas</strong>
+        <small>Buscá una posibilidad diferente.</small>
+      </button>
+    </section>
+
+    <section class="chat" id="chat" aria-label="Conversación" aria-live="polite"></section>
+
+    <section class="composer-wrap">
+      <form class="composer" id="chatForm">
+        <textarea id="input" rows="1" maxlength="4000" aria-label="Escribí tu mensaje" placeholder="Escribile a A.T.L.A.S..." required></textarea>
+        <button class="send" id="send" type="submit" aria-label="Enviar mensaje">↑</button>
+      </form>
+      <div class="composer-hint">
+        <span>ENTER enviar · SHIFT + ENTER nueva línea</span>
+        <span id="counter">0 / 4000</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>A.T.L.A.S.</span> · Prototipo de interfaz 0.1<br>
+    Sin IA conectada · Tus mensajes se guardan solo en este navegador, si está disponible.
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const chat = $("chat");
+const input = $("input");
+const sendButton = $("send");
+const welcome = $("welcome");
+const suggestions = $("suggestions");
+const form = $("chatForm");
+const counter = $("counter");
+const STORAGE_KEY = "atlas_demo_v01_history";
+
+let history = [];
+let busy = false;
+let replyTimer = null;
+
+function updateWelcome() {
+  const hasMessages = history.length > 0;
+  welcome.classList.toggle("hidden", hasMessages);
+  suggestions.classList.toggle("hidden", hasMessages);
+}
+
+function saveHistory() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-60)));
+  } catch (_) {
+    // El chat continúa funcionando si el navegador no permite guardar.
+  }
+}
+
+function addMessage(role, text) {
+  const row = document.createElement("div");
+  row.className = "message " + (role === "user" ? "user" : "atlas");
+
+  if (role !== "user") {
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "A";
+    avatar.setAttribute("aria-hidden", "true");
+    row.appendChild(avatar);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  const meta = document.createElement("div");
+  meta.className = "message-meta";
+  meta.textContent = role === "user" ? "VOS" : "A.T.L.A.S. · DEMO";
+
+  const body = document.createElement("div");
+  body.textContent = text;
+
+  bubble.append(meta, body);
+  row.appendChild(bubble);
+
+  if (role === "user") row.setAttribute("dir", "auto");
+
+  chat.appendChild(row);
+  chat.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
+function addTyping() {
+  const row = document.createElement("div");
+  row.className = "message";
+  row.id = "typingMessage";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "A";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.setAttribute("aria-label", "Preparando respuesta de demostración");
+
+  const meta = document.createElement("div");
+  meta.className = "message-meta";
+  meta.textContent = "A.T.L.A.S. · SIMULACIÓN";
+
+  const dots = document.createElement("div");
+  dots.className = "typing";
+  dots.innerHTML = "<i></i><i></i><i></i>";
+
+  bubble.append(meta, dots);
+  row.append(avatar, bubble);
+  chat.appendChild(row);
+  chat.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
+function removeTyping() {
+  const el = $("typingMessage");
+  if (el) el.remove();
+}
+
+function demoReply(message) {
+  const text = message.toLowerCase().trim();
+
+  if (/^(hola|buenas|buen día|buenas tardes|buenas noches|qué tal|como andas|cómo andas)/i.test(text)) {
+    return "¡Hola! Soy A.T.L.A.S. 0.1. 🟢\n\nEsta interfaz ya permite conversar, pero mis respuestas todavía son simuladas. Cuando conectemos un modelo de IA mediante un servidor seguro, podremos empezar a construir el asistente real.";
+  }
+
+  if (text.includes("program") || text.includes("código") || text.includes("codigo") || text.includes("html") || text.includes("javascript")) {
+    return "MODO DESARROLLO ACTIVADO.\n\nPara construir software, podemos dividir el trabajo en tres partes:\n\n1. Interfaz: lo que ves y tocás.\n2. Lógica: lo que hace la aplicación.\n3. Backend: el servidor que conecta servicios y protege secretos.\n\nEsta versión contiene las dos primeras en un archivo HTML. La conexión real con IA necesita un backend y todavía no está implementada.\n\n[Respuesta de demostración]";
+  }
+
+  if (text.includes("idea") || text.includes("crear") || text.includes("proyecto")) {
+    return "PROTOCOLO DE PROYECTO.\n\nUna idea se vuelve más útil cuando definimos:\n\n1. Qué problema resuelve.\n2. Para quién existe.\n3. Cuál es la versión más sencilla que podemos probar.\n4. Qué resultado demostraría que funciona.\n\nMi propuesta: empecemos con una función pequeña, probémosla y después la mejoramos. No hace falta construir todo de una vez.\n\n[Respuesta de demostración]";
+  }
+
+  if (text.includes("atlas")) {
+    return "IDENTIDAD DEL SISTEMA: A.T.L.A.S.\n\nMisión: ayudar a comprender, aprender, crear, analizar y resolver problemas.\n\nPrincipios de diseño:\n• Honestidad por encima de complacer.\n• Razonamiento claro y respeto.\n• Reconocer límites e incertidumbre.\n• Proteger la privacidad.\n\nImportante: estas son reglas de diseño del prototipo. Todavía no garantizan el comportamiento de un modelo real.\n\n[Respuesta de demostración]";
+  }
+
+  if (text.includes("gracias")) {
+    return "¡De nada! 🟢 Cada mejora cuenta. Acordate: esta versión simula las respuestas; todavía no hay un modelo de IA conectado.\n\n[Respuesta de demostración]";
+  }
+
+  return "RECIBIDO.\n\nTu mensaje llegó a la interfaz. En esta versión todavía no puedo analizarlo realmente porque no hay un modelo de IA conectado.\n\nEl próximo paso técnico es crear un backend seguro que reciba los mensajes y consulte un proveedor de IA sin exponer claves privadas en GitHub Pages.\n\n[Respuesta de demostración]";
+}
+
+function sendMessage(text) {
+  const message = text.trim();
+  if (!message || busy) return;
+
+  busy = true;
+  sendButton.disabled = true;
+  input.disabled = true;
+
+  history.push({ role: "user", text: message });
+  addMessage("user", message);
+  updateWelcome();
+  saveHistory();
+
+  input.value = "";
+  resizeInput();
+  updateCounter();
+  addTyping();
+
+  replyTimer = setTimeout(() => {
+    removeTyping();
+    const answer = demoReply(message);
+    history.push({ role: "atlas", text: answer });
+    addMessage("atlas", answer);
+    saveHistory();
+
+    busy = false;
+    sendButton.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }, 650);
+}
+
+function resizeInput() {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 140) + "px";
+}
+
+function updateCounter() {
+  counter.textContent = input.value.length + " / 4000";
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  sendMessage(input.value);
+});
+
+input.addEventListener("input", () => {
+  resizeInput();
+  updateCounter();
+});
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+suggestions.addEventListener("click", event => {
+  const button = event.target.closest("[data-prompt]");
+  if (!button) return;
+  sendMessage(button.dataset.prompt);
+});
+
+$("newChat").addEventListener("click", () => {
+  if (busy) {
+    clearTimeout(replyTimer);
+    removeTyping();
+    busy = false;
+    sendButton.disabled = false;
+    input.disabled = false;
+  }
+
+  history = [];
+  chat.replaceChildren();
+
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (_) {}
+
+  updateWelcome();
+  input.value = "";
+  resizeInput();
+  updateCounter();
+  input.focus();
+});
+
+function loadHistory() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return;
+
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return;
+
+    history = parsed.filter(item =>
+      item &&
+      ["user", "atlas"].includes(item.role) &&
+      typeof item.text === "string"
+    ).slice(-60);
+
+    history.forEach(item => addMessage(item.role, item.text));
+    updateWelcome();
+  } catch (_) {
+    history = [];
+  }
+}
+
+loadHistory();
+updateCounter();
+</script>
+</body>
+</html>
