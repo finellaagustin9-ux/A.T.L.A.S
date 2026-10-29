@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b0a">
+<title>A.T.L.A.S. 0.2 | NEXUS</title>
+<style>
+:root {
+  --bg:#080b0a;
+  --panel:#0e1511;
+  --line:#26392b;
+  --green:#71ff9b;
+  --text:#edf7ef;
+  --muted:#91a398;
+}
+* { box-sizing:border-box }
+html,body {
+  margin:0;min-height:100%;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif
+}
+body {
+  background:radial-gradient(ellipse at 50% -15%,#16452b,transparent 48%),var(--bg);
+  color:var(--text)
+}
+button,textarea { font:inherit }
+button { cursor:pointer }
+.app {
+  max-width:1100px;min-height:100dvh;margin:auto;padding:0 18px;
+  display:flex;flex-direction:column
+}
+header {
+  min-height:72px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  border-bottom:1px solid #ffffff12
+}
+.brand { display:flex;align-items:center;gap:12px }
+.logo {
+  width:42px;height:42px;display:grid;place-items:center;
+  border:1px solid #71ff9b55;border-radius:13px;
+  color:var(--green);font-size:24px;font-weight:900
+}
+.brand-name { font-weight:850;letter-spacing:3px;font-size:17px }
+.brand-name span { color:var(--green) }
+.brand-sub { font-size:9px;letter-spacing:2px;color:var(--muted) }
+.status { font-size:10px;color:var(--muted) }
+.dot {
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--green);margin-right:5px
+}
+.icon-btn {
+  padding:9px 12px;border:1px solid var(--line);
+  border-radius:10px;color:var(--text);background:var(--panel)
+}
+main {
+  width:100%;max-width:760px;margin:auto;flex:1;
+  display:flex;flex-direction:column
+}
+.welcome { text-align:center;padding:40px 0 25px }
+.core {
+  width:82px;height:82px;margin:0 auto 22px;
+  border:1px solid #71ff9b55;border-radius:50%;
+  display:grid;place-items:center;
+  background:radial-gradient(circle,#205632,#0a160e 70%);
+  box-shadow:0 0 35px #2ee87917
+}
+.core b { font-size:34px;color:var(--green) }
+.eyebrow { font-size:10px;letter-spacing:3px;color:var(--green) }
+h1 { font-size:clamp(25px,6vw,40px);letter-spacing:2px }
+h1 span { color:var(--green) }
+.welcome p {
+  max-width:450px;margin:auto;color:var(--muted);
+  font-size:13px;line-height:1.8
+}
+.suggestions {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;margin-bottom:24px
+}
+.suggestion {
+  min-height:85px;text-align:left;padding:13px;
+  border:1px solid var(--line);border-radius:14px;
+  color:var(--text);background:#101711
+}
+.suggestion:hover { border-color:var(--green) }
+.suggestion strong,.suggestion small { display:block }
+.suggestion strong { font-size:12px;margin:5px 0 }
+.suggestion small { color:var(--muted);font-size:11px;line-height:1.5 }
+.emoji { color:var(--green);font-size:18px }
+.chat { display:flex;flex-direction:column;gap:18px;padding:8px 0 22px }
+.message { display:flex;gap:10px;align-items:flex-start }
+.message.user { justify-content:flex-end }
+.avatar {
+  flex-shrink:0;width:32px;height:32px;display:grid;
+  place-items:center;border-radius:10px;color:var(--green);
+  background:#71ff9b10;border:1px solid #71ff9b35;font-weight:900
+}
+.bubble {
+  max-width:min(88%,560px);padding:12px 14px;
+  border:1px solid var(--line);border-radius:4px 15px 15px 15px;
+  background:var(--panel);font-size:13px;line-height:1.7;
+  white-space:pre-wrap;overflow-wrap:anywhere
+}
+.message.user .bubble {
+  background:#173021;border-color:#2ee87935;
+  border-radius:15px 4px 15px 15px
+}
+.message-meta {
+  font-size:9px;letter-spacing:1px;color:var(--green);
+  font-weight:800;margin-bottom:5px
+}
+.message.user .message-meta { color:#a6d8b4 }
+.typing { display:flex;gap:5px;padding:7px 0 }
+.typing i {
+  width:6px;height:6px;background:var(--green);
+  border-radius:50%;animation:pulse 1s infinite alternate
+}
+.typing i:nth-child(2) { animation-delay:.2s }
+.typing i:nth-child(3) { animation-delay:.4s }
+@keyframes pulse { to { opacity:.2;transform:translateY(-3px) } }
+.composer-wrap {
+  position:sticky;bottom:0;margin-top:auto;padding:14px 0 12px;
+  background:linear-gradient(transparent,var(--bg) 16%)
+}
+.composer {
+  display:flex;align-items:flex-end;gap:9px;padding:10px;
+  background:#101711;border:1px solid #304936;border-radius:17px
+}
+.composer:focus-within { border-color:var(--green) }
+textarea {
+  flex:1;min-width:0;min-height:42px;max-height:140px;
+  resize:none;padding:11px 5px;color:var(--text);
+  background:transparent;border:0;outline:0;line-height:1.5
+}
+textarea::placeholder { color:#75887b }
+.send {
+  flex-shrink:0;width:43px;height:43px;border:0;
+  border-radius:12px;background:var(--green);
+  color:#061109;font-size:22px;font-weight:900
+}
+.send:disabled { opacity:.5;cursor:wait }
+.composer-hint {
+  display:flex;justify-content:space-between;gap:10px;
+  margin-top:9px;color:var(--muted);font-size:10px
+}
+footer {
+  text-align:center;padding:13px 0 20px;color:#66776c;
+  font-size:10px;line-height:1.8
+}
+footer span { color:var(--green) }
+.hidden { display:none!important }
+@media(max-width:520px) {
+  .app { padding:0 12px }
+  .brand-name { font-size:14px;letter-spacing:2px }
+  .brand-sub { font-size:8px;letter-spacing:1px }
+  .status { font-size:9px }
+  .suggestion { padding:10px;min-height:92px }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">A</div>
+    <div>
+      <div class="brand-name">A.T.L.A.<span>S.</span></div>
+      <div class="brand-sub">ADVANCED INTELLIGENCE</div>
+    </div>
+  </div>
+  <div class="status"><span class="dot"></span> CONEXIÓN IA</div>
+  <button class="icon-btn" id="newChat" type="button" aria-label="Nueva conversación">＋</button>
+</header>
+
+<main>
+<section class="welcome" id="welcome">
+  <div class="core"><b>A</b></div>
+  <div class="eyebrow">SISTEMA INICIALIZADO · V0.2</div>
+  <h1>¿QUÉ VAMOS A <span>RESOLVER?</span></h1>
+  <p>Soy A.T.L.A.S., un asistente inteligente en desarrollo. Exploremos ideas, resolvamos problemas y construyamos algo que valga la pena.</p>
+</section>
+
+<section class="suggestions" id="suggestions">
+  <button class="suggestion" data-prompt="Ayudame a crear un proyecto desde cero.">
+    <span class="emoji">⌘</span>
+    <strong>Crear algo nuevo</strong>
+    <small>Convertí una idea en un proyecto.</small>
+  </button>
+  <button class="suggestion" data-prompt="Quiero aprender programación. ¿Por dónde empiezo?">
+    <span class="emoji">⌁</span>
+    <strong>Aprender</strong>
+    <small>Descubrí nuevas habilidades.</small>
+  </button>
+  <button class="suggestion" data-prompt="Tengo un problema y quiero analizarlo con objetividad.">
+    <span class="emoji">◎</span>
+    <strong>Analizar un problema</strong>
+    <small>Separá hechos de suposiciones.</small>
+  </button>
+  <button class="suggestion" data-prompt="Dame una idea original para desarrollar hoy.">
+    <span class="emoji">✳</span>
+    <strong>Explorar ideas</strong>
+    <small>Buscá una posibilidad diferente.</small>
+  </button>
+</section>
+
+<section class="chat" id="chat" aria-live="polite"></section>
+
+<section class="composer-wrap">
+  <form class="composer" id="chatForm">
+    <textarea id="input" rows="1" maxlength="4000"
+      aria-label="Escribí tu mensaje"
+      placeholder="Escribile a A.T.L.A.S..." required></textarea>
+    <button class="send" id="send" type="submit" aria-label="Enviar">↑</button>
+  </form>
+  <div class="composer-hint">
+    <span>ENTER enviar · SHIFT + ENTER nueva línea</span>
+    <span id="counter">0 / 4000</span>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>A.T.L.A.S.</span> · NEXUS 0.2<br>
+  Asistente conectado mediante un servidor seguro.
+</footer>
+</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const chat = $("chat");
+const input = $("input");
+const sendButton = $("send");
+const welcome = $("welcome");
+const suggestions = $("suggestions");
+const form = $("chatForm");
+const counter = $("counter");
+const STORAGE_KEY = "atlas_demo_v01_history";
+const API_URL = "https://atlas-api.ianagustin035.workers.dev";
+
+let history = [];
+let busy = false;
+
+function updateWelcome() {
+  const hasMessages = history.length > 0;
+  welcome.classList.toggle("hidden", hasMessages);
+  suggestions.classList.toggle("hidden", hasMessages);
+}
+
+function saveHistory() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-60)));
+  } catch (_) {}
+}
+
+function addMessage(role, text) {
+  const row = document.createElement("div");
+  row.className = "message " + (role === "user" ? "user" : "atlas");
+
+  if (role !== "user") {
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "A";
+    row.appendChild(avatar);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  const meta = document.createElement("div");
+  meta.className = "message-meta";
+  meta.textContent = role === "user" ? "VOS" : "A.T.L.A.S.";
+
+  const body = document.createElement("div");
+  body.textContent = text;
+
+  bubble.append(meta, body);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  row.scrollIntoView({ behavior:"smooth", block:"end" });
+}
+
+function addTyping() {
+  const row = document.createElement("div");
+  row.className = "message";
+  row.id = "typingMessage";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "A";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  const meta = document.createElement("div");
+  meta.className = "message-meta";
+  meta.textContent = "A.T.L.A.S. · PROCESANDO";
+
+  const dots = document.createElement("div");
+  dots.className = "typing";
+  dots.innerHTML = "<i></i><i></i><i></i>";
+
+  bubble.append(meta, dots);
+  row.append(avatar, bubble);
+  chat.appendChild(row);
+  row.scrollIntoView({ behavior:"smooth", block:"end" });
+}
+
+function removeTyping() {
+  const el = $("typingMessage");
+  if (el) el.remove();
+}
+
+async function sendMessage(text) {
+  const message = text.trim();
+  if (!message || busy) return;
+
+  busy = true;
+  sendButton.disabled = true;
+  input.disabled = true;
+
+  history.push({ role:"user", text:message });
+  addMessage("user", message);
+  updateWelcome();
+  saveHistory();
+
+  input.value = "";
+  resizeInput();
+  updateCounter();
+  addTyping();
+
+  try {
+    const response = await fetch(API_URL, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ message })
+    });
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (_) {
+      throw new Error("El servidor devolvió una respuesta inválida.");
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Error del servidor (HTTP " + response.status + ")."
+      );
+    }
+
+    if (typeof data.reply !== "string" || !data.reply.trim()) {
+      throw new Error("El servidor no devolvió una respuesta de Gemini.");
+    }
+
+    removeTyping();
+    history.push({ role:"atlas", text:data.reply });
+    addMessage("atlas", data.reply);
+    saveHistory();
+
+  } catch (error) {
+    removeTyping();
+
+    let detail = error.message || "Error desconocido.";
+    if (error instanceof TypeError) {
+      detail = "No se pudo establecer la conexión. Puede ser un problema de red o de configuración CORS del Worker.";
+    }
+
+    const errorText = "No pude conectar con A.T.L.A.S. IA.\n\n" +
+      detail + "\n\nEl mensaje no se perdió. Podés volver a intentarlo.";
+
+    history.push({ role:"atlas", text:errorText });
+    addMessage("atlas", errorText);
+    saveHistory();
+
+  } finally {
+    busy = false;
+    sendButton.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+function resizeInput() {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 140) + "px";
+}
+
+function updateCounter() {
+  counter.textContent = input.value.length + " / 4000";
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  sendMessage(input.value);
+});
+
+input.addEventListener("input", () => {
+  resizeInput();
+  updateCounter();
+});
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+suggestions.addEventListener("click", event => {
+  const button = event.target.closest("[data-prompt]");
+  if (button) sendMessage(button.dataset.prompt);
+});
+
+$("newChat").addEventListener("click", () => {
+  if (busy) return;
+
+  history = [];
+  chat.replaceChildren();
+
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (_) {}
+
+  updateWelcome();
+  input.value = "";
+  resizeInput();
+  updateCounter();
+  input.focus();
+});
+
+function loadHistory() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return;
+
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return;
+
+    history = parsed.filter(item =>
+      item &&
+      ["user", "atlas"].includes(item.role) &&
+      typeof item.text === "string"
+    ).slice(-60);
+
+    history.forEach(item => addMessage(item.role, item.text));
+    updateWelcome();
+  } catch (_) {
+    history = [];
+  }
+}
+
+loadHistory();
+updateCounter();
+</script>
+</body>
+</html>
