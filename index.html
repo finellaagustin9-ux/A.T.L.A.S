@@ -357,7 +357,12 @@ async function sendMessage(text) {
     removeTyping();
     history.push({ role:"atlas", text:data.reply });
     addMessage("atlas", data.reply);
-    saveHistory();
+
+if (window.ATLASVoice) {
+  ATLASVoice.speak(data.reply);
+}
+
+saveHistory();
 
   } catch (error) {
     removeTyping();
