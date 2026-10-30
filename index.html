@@ -1,0 +1,802 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="A.T.L.A.S. — Asistente inteligente personal">
+  <title>A.T.L.A.S. | Asistente personal</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0d1b2c;
+      --panel2: #12243a;
+      --border: #263b53;
+      --accent: #35d9ff;
+      --accent2: #8b7cff;
+      --text: #eaf5ff;
+      --muted: #94a9bf;
+      --danger: #ff7777;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top, #102b45 0, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(100%, 920px);
+      min-height: 100vh;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 14px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px;
+      background: #0b1928eF;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .orb {
+      flex: 0 0 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 22px #35d9ff36, inset 0 0 15px #35d9ff20;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    h1 {
+      font-size: 21px;
+      letter-spacing: 4px;
+      margin: 0;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .status::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #ffc857;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status.ready::before {
+      background: #5ce5a0;
+    }
+
+    .status.error::before {
+      background: var(--danger);
+    }
+
+    .panel {
+      background: #0b1928eF;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .panel h2 {
+      font-size: 14px;
+      letter-spacing: 1px;
+      margin: 0 0 13px;
+    }
+
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .voice-button, .secondary, .primary {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 13px;
+      color: var(--text);
+      background: var(--panel2);
+    }
+
+    .voice-button.active {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1px #35d9ff35;
+    }
+
+    .voice-button strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .voice-button span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .setting label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .voice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .secondary {
+      font-size: 12px;
+    }
+
+    .primary {
+      color: #04111d;
+      background: var(--accent);
+      border-color: var(--accent);
+      font-weight: 750;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .chat {
+      flex: 1;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      background: #081522d9;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .chat-heading {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      padding: 16px;
+      overflow-y: auto;
+      min-height: 250px;
+      max-height: 48vh;
+    }
+
+    .message {
+      max-width: 88%;
+      padding: 12px 14px;
+      border-radius: 15px;
+      line-height: 1.55;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .message.atlas {
+      align-self: flex-start;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-top-left-radius: 4px;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #12384b;
+      border: 1px solid #24627a;
+      border-top-right-radius: 4px;
+    }
+
+    .message.error {
+      border-color: #8e454d;
+      color: #ffd4d4;
+    }
+
+    .message .speaker {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 5px;
+      font-weight: 800;
+    }
+
+    .message.user .speaker {
+      color: #9ce6ff;
+    }
+
+    .composer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 45px;
+      max-height: 140px;
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
+      color: var(--text);
+      background: #07111f;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    textarea::placeholder {
+      color: #71879e;
+    }
+
+    #sendButton {
+      min-height: 45px;
+      min-width: 76px;
+    }
+
+    .footnote {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+      padding: 0 6px 8px;
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        padding: 9px;
+        gap: 10px;
+      }
+
+      header, .panel {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 18px;
+        letter-spacing: 3px;
+      }
+
+      .orb {
+        flex-basis: 42px;
+        height: 42px;
+      }
+
+      .status {
+        max-width: 82px;
+        font-size: 10px;
+      }
+
+      #messages {
+        padding: 12px;
+        max-height: 45vh;
+      }
+
+      .message {
+        max-width: 94%;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header>
+      <div class="orb" aria-hidden="true">A</div>
+      <div>
+        <h1>A.T.L.A.S.</h1>
+        <div class="subtitle">Asistente inteligente personal</div>
+      </div>
+      <div id="connectionStatus" class="status">Preparando</div>
+    </header>
+
+    <section class="panel" aria-labelledby="voiceHeading">
+      <h2 id="voiceHeading">SISTEMA DE VOZ</h2>
+
+      <div class="voice-grid">
+        <button type="button" class="voice-button active" data-profile="jarvis">
+          <strong>J.A.R.V.I.S.</strong>
+          <span>Grave · elegante · británico</span>
+        </button>
+
+        <button type="button" class="voice-button" data-profile="edith">
+          <strong>E.D.I.T.H.</strong>
+          <span>Clara · sofisticada · tecnológica</span>
+        </button>
+      </div>
+
+      <div class="settings">
+        <div class="setting">
+          <label for="voiceRate">
+            <span>Velocidad</span>
+            <span id="rateValue">0.88</span>
+          </label>
+          <input id="voiceRate" type="range" min="0.65" max="1.3"
+            step="0.01" value="0.88">
+        </div>
+
+        <div class="setting">
+          <label for="voicePitch">
+            <span>Tono</span>
+            <span id="pitchValue">0.78</span>
+          </label>
+          <input id="voicePitch" type="range" min="0.7" max="1.3"
+            step="0.01" value="0.78">
+        </div>
+      </div>
+
+      <div class="voice-actions">
+        <button type="button" class="secondary" id="testVoice">
+          Probar voz
+        </button>
+        <button type="button" class="secondary" id="stopVoice">
+          Detener voz
+        </button>
+      </div>
+    </section>
+
+    <section class="chat" aria-label="Conversación con A.T.L.A.S.">
+      <div class="chat-heading">
+        <span>CONVERSACIÓN</span>
+        <button type="button" class="secondary" id="clearHistory">
+          Borrar historial
+        </button>
+      </div>
+
+      <div id="messages" aria-live="polite">
+        <div class="message atlas">
+          <span class="speaker">A.T.L.A.S.</span>
+          Hola. Soy A.T.L.A.S. Escribime para comenzar.
+        </div>
+      </div>
+
+      <form id="composer" class="composer">
+        <textarea
+          id="messageInput"
+          maxlength="4000"
+          rows="1"
+          placeholder="Escribile a A.T.L.A.S..."
+          aria-label="Tu mensaje"
+          required
+        ></textarea>
+        <button id="sendButton" class="primary" type="submit">
+          Enviar
+        </button>
+      </form>
+    </section>
+
+    <div class="footnote">
+      La conversación se procesa mediante el Worker de Cloudflare.
+      La disponibilidad de las voces depende del navegador y del dispositivo.
+    </div>
+  </main>
+
+  <script src="atlas-voice.js"></script>
+
+  <script>
+    "use strict";
+
+    const API_URL =
+      "https://atlas-api.ianagustin035.workers.dev/";
+
+    const STORAGE_KEY = "atlasChatHistoryV1";
+    const VOICE_KEY = "atlasVoiceSettings";
+
+    const messages = document.getElementById("messages");
+    const composer = document.getElementById("composer");
+    const input = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    const status = document.getElementById("connectionStatus");
+
+    let history = [];
+    let busy = false;
+    let typingElement = null;
+
+    function setStatus(text, type = "") {
+      status.textContent = text;
+      status.className = "status" + (type ? " " + type : "");
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-100)));
+      } catch (error) {
+        console.warn("No se pudo guardar el historial.", error);
+      }
+    }
+
+    function addMessage(role, text, isError = false, save = true) {
+      const element = document.createElement("div");
+      element.className =
+        "message " + (role === "user" ? "user" : "atlas") +
+        (isError ? " error" : "");
+
+      const speaker = document.createElement("span");
+      speaker.className = "speaker";
+      speaker.textContent = role === "user" ? "VOS" : "A.T.L.A.S.";
+
+      const content = document.createElement("div");
+      content.textContent = text;
+
+      element.append(speaker, content);
+      messages.appendChild(element);
+      messages.scrollTop = messages.scrollHeight;
+
+      if (save && !isError) {
+        history.push({ role, text });
+        history = history.slice(-100);
+        saveHistory();
+      }
+
+      return element;
+    }
+
+    function loadHistory() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+        if (Array.isArray(stored)) {
+          history = stored.filter(item =>
+            item &&
+            (item.role === "user" || item.role === "atlas") &&
+            typeof item.text === "string"
+          ).slice(-100);
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      messages.replaceChildren();
+
+      if (!history.length) {
+        addMessage(
+          "atlas",
+          "Hola. Soy A.T.L.A.S. Escribime para comenzar.",
+          false,
+          false
+        );
+        return;
+      }
+
+      history.forEach(item => {
+        addMessage(item.role, item.text, false, false);
+      });
+    }
+
+    function showTyping() {
+      typingElement = addMessage("atlas", "Procesando tu mensaje...", false, false);
+      typingElement.dataset.typing = "true";
+    }
+
+    function removeTyping() {
+      if (typingElement) {
+        typingElement.remove();
+        typingElement = null;
+      }
+    }
+
+    async function sendMessage(message) {
+      if (busy) return;
+
+      busy = true;
+      sendButton.disabled = true;
+      input.disabled = true;
+      sendButton.textContent = "...";
+
+      addMessage("user", message);
+      showTyping();
+      setStatus("Conectando");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message })
+        });
+
+        const raw = await response.text();
+        let data;
+
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          throw new Error(
+            "El servidor devolvió una respuesta que no es JSON. HTTP " +
+            response.status
+          );
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || ("Error del servidor. HTTP " + response.status)
+          );
+        }
+
+        if (typeof data.reply !== "string" || !data.reply.trim()) {
+          throw new Error(
+            data.error || "El servidor no devolvió una respuesta válida."
+          );
+        }
+
+        removeTyping();
+        addMessage("atlas", data.reply);
+        setStatus("Respuesta recibida", "ready");
+
+        if (window.ATLASVoice) {
+          const result = window.ATLASVoice.speak(data.reply);
+
+          if (result && result.ok === false) {
+            console.warn("La voz no pudo reproducirse:", result.error);
+          }
+        }
+
+      } catch (error) {
+        removeTyping();
+
+        const explanation = error instanceof TypeError
+          ? "No se pudo conectar con el Worker. Revisá la URL, la conexión y la configuración CORS."
+          : error.message;
+
+        addMessage("atlas", explanation, true, false);
+        setStatus("Error de conexión", "error");
+        console.error("Error al enviar el mensaje:", error);
+
+      } finally {
+        busy = false;
+        sendButton.disabled = false;
+        input.disabled = false;
+        sendButton.textContent = "Enviar";
+        input.focus();
+      }
+    }
+
+    composer.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const message = input.value.trim();
+
+      if (!message || busy) return;
+
+      input.value = "";
+      sendMessage(message);
+    });
+
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        composer.requestSubmit();
+      }
+    });
+
+    document.getElementById("clearHistory").addEventListener("click", () => {
+      if (!confirm("¿Querés borrar toda la conversación guardada en este dispositivo?")) {
+        return;
+      }
+
+      history = [];
+      saveHistory();
+      messages.replaceChildren();
+
+      addMessage(
+        "atlas",
+        "Historial borrado. Podemos empezar de nuevo.",
+        false,
+        false
+      );
+    });
+
+    function selectVoiceProfile(profile) {
+      if (!window.ATLASVoice) {
+        setStatus("Voz no disponible", "error");
+        return;
+      }
+
+      try {
+        window.ATLASVoice.setProfile(profile);
+
+        document.querySelectorAll("[data-profile]").forEach(button => {
+          button.classList.toggle(
+            "active",
+            button.dataset.profile === profile
+          );
+        });
+
+        const defaults = profile === "edith"
+          ? { rate: 0.96, pitch: 1.08 }
+          : { rate: 0.88, pitch: 0.78 };
+
+        const saved = loadVoiceSettings();
+
+        document.getElementById("voiceRate").value =
+          saved.rate ?? defaults.rate;
+        document.getElementById("voicePitch").value =
+          saved.pitch ?? defaults.pitch;
+
+        applyVoiceSettings();
+      } catch (error) {
+        console.error("No se pudo cambiar el perfil de voz:", error);
+      }
+    }
+
+    function loadVoiceSettings() {
+      try {
+        return JSON.parse(localStorage.getItem(VOICE_KEY) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function applyVoiceSettings() {
+      const rate = Number(document.getElementById("voiceRate").value);
+      const pitch = Number(document.getElementById("voicePitch").value);
+
+      document.getElementById("rateValue").textContent = rate.toFixed(2);
+      document.getElementById("pitchValue").textContent = pitch.toFixed(2);
+
+      if (window.ATLASVoice) {
+        window.ATLASVoice.setRate(rate);
+        window.ATLASVoice.setPitch(pitch);
+      }
+    }
+
+    document.querySelectorAll("[data-profile]").forEach(button => {
+      button.addEventListener("click", () => {
+        selectVoiceProfile(button.dataset.profile);
+      });
+    });
+
+    document.getElementById("voiceRate").addEventListener(
+      "input", applyVoiceSettings
+    );
+
+    document.getElementById("voicePitch").addEventListener(
+      "input", applyVoiceSettings
+    );
+
+    document.getElementById("testVoice").addEventListener("click", () => {
+      if (!window.ATLASVoice) {
+        setStatus("Voz no disponible", "error");
+        return;
+      }
+
+      const profile = loadVoiceSettings().profile || "jarvis";
+      const sample = profile === "edith"
+        ? "Hola. Soy A.T.L.A.S. Sistemas preparados. ¿En qué puedo ayudarte?"
+        : "Buenas tardes. Soy A.T.L.A.S. Todos los sistemas están preparados. ¿En qué puedo ayudarte?";
+
+      const result = window.ATLASVoice.speak(sample);
+
+      if (result && result.ok === false) {
+        addMessage("atlas", result.error, true, false);
+      }
+    });
+
+    document.getElementById("stopVoice").addEventListener("click", () => {
+      if (window.ATLASVoice) {
+        window.ATLASVoice.stop();
+      }
+    });
+
+    function initializeVoice() {
+      if (!window.ATLASVoice) {
+        console.warn("No se encontró atlas-voice.js.");
+        return;
+      }
+
+      const saved = loadVoiceSettings();
+      const profile = saved.profile || "jarvis";
+
+      try {
+        window.ATLASVoice.setProfile(profile);
+
+        const defaults = profile === "edith"
+          ? { rate: 0.96, pitch: 1.08 }
+          : { rate: 0.88, pitch: 0.78 };
+
+        document.getElementById("voiceRate").value =
+          saved.rate ?? defaults.rate;
+        document.getElementById("voicePitch").value =
+          saved.pitch ?? defaults.pitch;
+
+        document.querySelectorAll("[data-profile]").forEach(button => {
+          button.classList.toggle(
+            "active",
+            button.dataset.profile === profile
+          );
+        });
+
+        applyVoiceSettings();
+      } catch (error) {
+        console.error("Error al iniciar la voz:", error);
+      }
+    }
+
+    loadHistory();
+    initializeVoice();
+    setStatus("Listo", "ready");
+  </script>
+</body>
+</html>
